@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.1] - 2026-11-10
+
 autogeom continues the `Geometry` part of [automol](https://github.com/avcopan/automol) 0.0.31 under a new name, which no longer clashes with the `automol` module of the older AutoMech codes.
 The changes below are relative to automol 0.0.31.
 
