@@ -1,0 +1,43 @@
+name: test
+
+on:
+  push:
+    branches: ["**"]  # all branches, but not tags (releases run this workflow themselves)
+  pull_request:
+  workflow_dispatch:
+  workflow_call:  # allows the release workflow to run the tests first
+
+jobs:
+  pre-commit-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: prefix-dev/setup-pixi@v0.11.2
+        with:
+          cache: true
+          environments: dev test
+
+      - name: Run pre-commit hooks, except the tests (run below)
+        run: pixi run pre-commit-check
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # report results for every environment
+      matrix:
+        # test: highest compatible dependency versions
+        # test-lowest: lowest versions allowed by the lower bounds
+        environment: [test, test-lowest]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: prefix-dev/setup-pixi@v0.11.2
+        with:
+          cache: true
+          environments: ${{ matrix.environment }}
+
+      - name: Run tests with coverage report
+        run: pixi run -e ${{ matrix.environment }} test

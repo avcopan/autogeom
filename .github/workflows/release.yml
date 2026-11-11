@@ -1,0 +1,82 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # for prefix.dev and PyPI Trusted Publishing
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: prefix-dev/setup-pixi@v0.11.2
+        with:
+          cache: true
+          environments: dev
+
+      - name: Build conda and PyPI packages
+        run: |
+          pixi run build-conda
+          pixi run build-pypi
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: release-artifacts
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist/*.conda
+
+      - name: Publish conda and PyPI packages
+        run: |
+          # Publish to prefix.dev
+          pixi run publish-conda
+
+          # Publish to PyPI (for actual release)
+          pixi run publish-pypi
+
+          # Publish to Test PyPI (for test release)
+          # pixi run publish-test-pypi
+
+  release:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # to create the GitHub release
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download release artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: release-artifacts
+          path: dist/
+
+      - name: Extract release notes
+        id: extract-release-notes
+        uses: ffurrer2/extract-release-notes@v2
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          body: ${{ steps.extract-release-notes.outputs.release_notes }}
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist/*.conda

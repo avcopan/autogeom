@@ -1,0 +1,14 @@
+{
+  // The Python extensions only see the Pixi environment (Ruff, ty, pytest) if VS Code
+  // loads it, which the direnv extension does from .envrc (see the README).
+  // Tombi validates pyproject.toml and pixi.toml against their schemas.
+  "recommendations": [
+    "ms-python.python",
+    "charliermarsh.ruff",
+    "astral-sh.ty",
+    "mkhl.direnv",
+    "tombi-toml.tombi",
+    "github.vscode-github-actions",
+    "redhat.vscode-yaml"
+  ]
+}

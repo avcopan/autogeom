@@ -1,0 +1,37 @@
+# Merge tool backups
+*.orig
+
+# Python caches
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Test coverage reports
+.coverage
+htmlcov/
+
+# Distribution packages
+dist/
+*.conda
+
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# Local environment stashes
+.pixi_local_true
+.pixi_local_false
+.pixi_local_true.lock
+.pixi_local_false.lock
+
+# Great Docs build directory (ephemeral, do not commit)
+/great-docs/
+
+# Great Docs versioned-build artifacts
+_great_docs_build/
+.great-docs-build/
+.great-docs-cache/
+.great-docs/

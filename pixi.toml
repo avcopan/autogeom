@@ -1,0 +1,127 @@
+[workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+preview = ["pixi-build"]
+requires-pixi = ">=0.82"
+
+[dependencies]
+autogeom = { path = "." }
+
+[package]
+name = "autogeom"
+version = "0.0.0"
+
+[package.build]
+backend = { name = "pixi-build-python", version = "*" }
+
+[package.build.config]
+ignore-pyproject-manifest = false
+ignore-pypi-mapping = false
+
+[package.build.config.pypi-conda-map]
+# Add name mappings for packages not on conda-forge
+
+[package.host-dependencies]
+# Python and UV are automatically included
+
+[environments]
+default = { solve-group = "default" }
+test = { features = ["test"], solve-group = "default"}
+dev = { features = ["dev", "test"], solve-group = "default"}
+# Test with the lowest versions allowed by the lower bounds on the dependencies
+test-lowest = { features = ["test", "lowest"] }
+
+[feature.test.dependencies]
+pytest = ">=9.1.1"
+pytest-cov = ">=7.1.0"
+
+[feature.test.tasks]
+test = { cmd = "pytest", default-environment = "test" }
+
+# Solve to the lowest versions allowed by the dependency specs (see test-lowest above)
+[feature.lowest]
+solve-strategy = "lowest"
+
+# Floors for packages that other packages depend on without (adequate) lower bounds
+[feature.lowest.constraints]
+# Data packages that should always be recent
+ca-certificates = ">=2026.10.18"
+tzdata = ">=2026c"
+# Older typing-extensions releases break on Python 3.13 (e.g. pydantic fails to import)
+typing-extensions = ">=4.12"
+# The oldest libstdcxx-ng packages ship a libstdc++.so.6 that shadows the newer one from
+# libstdcxx, so C++ packages fail with "GLIBCXX_3.4.31 not found"
+libstdcxx-ng = ">=13"
+
+# Only use PyPI wheels: unbounded transitive PyPI dependencies would otherwise resolve
+# to ancient source-only releases that fail to build
+[feature.lowest.pypi-options]
+no-build = true
+
+[feature.dev.dependencies]
+# Dependency management
+uv = "*"
+# Formatting, linting, and pre-commit hooks
+ruff = "*"
+ty = "*"
+import-linter = "*"
+lefthook = "*"
+actionlint = "*"
+# Releases
+tbump = "*"
+# Template updates
+copier = "*"
+# Notebooks
+ipykernel = "*"
+# Documentation (see great-docs.yml)
+quarto = ">=1.9.38"
+
+[feature.dev.pypi-dependencies]
+# Releases
+keepachangelog = "*"
+# Documentation
+great-docs = ">=0.17.0"
+
+[feature.dev.tasks]
+# Manage pyproject.toml with uv
+uv = "uv"
+add = "uv add"
+remove = "uv remove"
+# Local dependency management (see scripts/local.sh)
+local = "./scripts/local.sh"
+# Run the tests with the lowest dependency versions (see test-lowest environment)
+test-lowest = "pixi run -e test-lowest test"
+# Individual tasks for pre-commit hooks (must be added to lefthook.yaml)
+# Check for merge conflict markers (lefthook.yaml runs the script directly, which also
+# works when pixi.toml itself has conflicts)
+conflicts = "./scripts/conflicts.sh"
+fmt = "ruff format ."
+lint = "ruff check . --fix"
+types = "ty check"
+imports = "lint-imports"
+workflows = "actionlint"  # lint the GitHub Actions workflows
+# Run pre-commit hooks (see lefthook.yaml)
+pre-commit = "lefthook run pre-commit --all-files"
+pre-commit-check = "lefthook run pre-commit --all-files --tag check"  # skips the tests
+pre-commit-local = "lefthook run pre-commit-local --all-files"
+# Build and preview documentation (see great-docs.yml)
+docs-build = "great-docs build"
+docs-preview = { cmd = "great-docs preview", depends-on = ["docs-build"] }
+# The publish tasks skip files that were already uploaded, so a failed release can be rerun
+# Build and publish conda package
+build-conda = "pixi publish --target-dir dist"
+publish-conda = "pixi upload prefix --skip-existing --channel avcopan/automech dist/*.conda"
+# Build and publish PyPI package
+build-pypi = "uv build"
+publish-pypi = "uv publish --check-url https://pypi.org/simple/"
+publish-test-pypi = "uv publish --publish-url https://test.pypi.org/legacy/ --check-url https://test.pypi.org/simple/"
+# Initiate release
+version = "tbump current-version"
+changelog = { cmd = "keepachangelog release {{ version }}", args=["version"] }
+release = "tbump"
+# Update against template changes (see scripts/copier-update.sh)
+copier-update = "./scripts/copier-update.sh"
+# Toggle Git hooks on/off
+hooks = "./scripts/hooks.sh"
+# Setup and initialize this repository (only run once)
+init = { cmd = "./scripts/init.sh" }

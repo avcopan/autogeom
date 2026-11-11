@@ -1,0 +1,9 @@
+# Changes here will be overwritten by Copier
+_commit: v0.1.12
+_src_path: gh:avcopan/copier-pixi-python
+author_email: avcopan@uga.edu
+author_name: Andreas V. Copan
+github_org_name: avcopan
+package_name: autogeom
+prefix_channel: avcopan/automech
+repo_name: autogeom

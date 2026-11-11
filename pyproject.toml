@@ -1,0 +1,80 @@
+[project]
+name = "autogeom"
+version = "0.0.0"
+readme = "README.md"  # the PyPI page
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Andreas V. Copan", email = "avcopan@uga.edu"}]
+dependencies = []
+requires-python = ">= 3.13"
+
+[project.urls]
+Repository = "https://github.com/avcopan/autogeom"
+Documentation = "https://avcopan.github.io/autogeom/"
+
+[build-system]
+build-backend = "uv_build"
+requires = ["uv_build"]
+
+# Ruff configurations
+[tool.ruff]
+extend-exclude = [".claude"]  # vendored agent skills
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812",   # missing trailing comma (handled by format)
+    "TID252",   # relative import
+    "D203",     # conflict: incorrect blank line before class (uses D211 instead)
+    "D213",     # conflict: multi-line summary second line (uses D212 instead)
+    "CPY001",   # copyright notice
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**.py" = ["S101", "PLR2004"]  # assert, magic values
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+# Ty configurations
+[tool.ty.environment]
+python = ".pixi/envs/test/bin/python"
+
+[tool.ty.src]
+include = [
+    "src",
+    "tests",
+]
+
+# Import-linter configurations
+[tool.importlinter]
+root_package = "autogeom"
+
+[[tool.importlinter.contracts]]
+name = "Module Layering"
+type = "layers"
+layers = [
+    "autogeom.layer2",
+    "autogeom.layer1",
+]
+
+# Pytest configurations
+[tool.pytest.ini_options]
+testpaths = ["tests", "src"]
+addopts = [
+    "--doctest-modules",
+    "--cov=autogeom",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+doctest_optionflags = "NORMALIZE_WHITESPACE"
+
+# Pytest-cov configurations
+[tool.coverage.run]
+branch = true
+source = ["autogeom"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 80

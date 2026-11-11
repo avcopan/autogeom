@@ -1,0 +1,11 @@
+{
+  // Format with Ruff on save, as the pre-commit hooks do. Zed runs the Ruff from the
+  // Pixi environment and also sorts imports (Ruff's organize-imports) when formatting.
+  "languages": {
+    "Python": {
+      "format_on_save": "on",
+      // Use ty instead of basedpyright for type checking and code navigation
+      "language_servers": ["ty", "ruff", "!basedpyright", "..."]
+    }
+  }
+}

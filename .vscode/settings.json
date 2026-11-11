@@ -1,0 +1,13 @@
+{
+  // Format with Ruff on save, using the Ruff from the Pixi environment
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true
+  },
+  "ruff.importStrategy": "fromEnvironment",
+  // Use ty instead of Pylance for type checking and code navigation
+  "python.languageServer": "None",
+  // Run the tests from the Testing view in the test environment, as `pixi run test` does
+  "python.defaultInterpreterPath": "${workspaceFolder}/.pixi/envs/test/bin/python",
+  "python.testing.pytestEnabled": true
+}
