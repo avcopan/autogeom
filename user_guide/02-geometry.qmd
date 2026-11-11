@@ -1,0 +1,204 @@
+---
+title: "Geometries"
+guide-section: "User Guide"
+---
+
+# Geometries
+
+autogeom is built around one model, `Geometry`, and functions that take a
+`Geometry` as their first argument. All of them are imported from the
+package root:
+
+```python
+import autogeom
+from autogeom import Geometry
+```
+
+## Creating a `Geometry`
+
+A `Geometry` is a pydantic model with four fields: atomic `symbols`,
+Cartesian `coordinates` (in Angstroms), `charge`, and `spin` (number of
+unpaired electrons, i.e. `2S`):
+
+```python
+from autogeom import Geometry
+
+water = Geometry(
+    symbols=["O", "H", "H"],
+    coordinates=[[0.0, 0.0, 0.0], [0.0, 0.0, 0.96], [0.93, 0.0, -0.24]],
+    charge=0,
+    spin=0,
+)
+```
+
+`Geometry` is validated on construction and on assignment (a pydantic
+`ValidationError`, which is a `ValueError`, is raised otherwise):
+
+- `symbols` must be known elements; they are canonicalized, so `"cl"` becomes
+  `"Cl"`.
+- `coordinates` must have shape `(len(symbols), 3)`.
+- `spin` must be non-negative, no larger than the electron count, and of the
+  same parity.
+
+Geometries compare equal (`==`) when all fields match, with coordinates
+compared exactly.
+
+### Per-atom properties
+
+`Geometry` exposes several derived, per-atom properties, backed by
+the periodic table data in `autogeom.element`:
+
+```python
+water.atom_count       # 3
+water.masses           # isotopic masses, e.g. [15.9949, 1.0078, 1.0078]
+water.atomic_numbers   # [8, 1, 1]
+water.covalent_radii   # Pyykko covalent radii, in Angstroms
+water.valences          # number of valence electrons per atom
+```
+
+## Reading and writing xyz
+
+`Geometry` round-trips through the standard xyz format, both as instance
+methods and as functions:
+
+```python
+import autogeom
+
+xyz = water.xyz_block(comment="water")
+water_rt = Geometry.from_xyz_block(xyz, charge=0, spin=0)
+
+water.xyz_file(path="water.xyz")
+water_rt = Geometry.from_xyz_file("water.xyz", charge=0, spin=0)
+
+# equivalent functions
+xyz = autogeom.xyz_block(water, comment="water")
+water_rt = autogeom.from_xyz_block(xyz, charge=0, spin=0)
+```
+
+`charge` and `spin` aren't part of the xyz format, so they must be supplied
+explicitly when reading. Atoms may be given by symbol (case-insensitive) or
+atomic number. A malformed or empty xyz block, or one whose atom count line
+doesn't match the number of atom lines, raises `autogeom.XYZFormatError`.
+
+Multi-frame xyz files, such as conformer lists, are read and written with
+`from_xyz_trajectory_file`, `xyz_trajectory_file`, and their `_block`
+counterparts; `xyz_trajectory_comments` returns the comment line of each
+frame.
+
+## Molecular formula
+
+`formula` gives the molecular formula of a geometry:
+
+```python
+autogeom.formula(water)  # "H2O"
+```
+
+Elements are in Hill order: with carbon present, C comes first, then H, then
+the rest alphabetically; without carbon, all elements (including H) are
+alphabetical. See [Conversions](../user-guide/conversions.qmd).
+
+## Geometric properties
+
+A handful of properties are computed directly from the coordinates:
+
+```python
+autogeom.center_of_mass(water)     # mass-weighted centroid
+autogeom.distance_matrix(water)    # pairwise atom-atom distances
+autogeom.adjacency_matrix(water)   # binary connectivity, from covalent radii
+autogeom.distance_keys(water)      # sorted (z1, z2, distance) descriptor
+```
+
+`adjacency_matrix` draws an edge between two atoms when their distance is
+less than `sigma` times the sum of their covalent radii (`sigma=1.3` by
+default). With `flood_fill=True`, `sigma` is increased until the molecule is
+connected (or no more edges can be added). With `enforce_valence=True`, the
+number of bonds to each atom is capped at its maximum valence, keeping the
+shortest bonds relative to their covalent radii. `distance_keys` produces an
+order-independent geometric fingerprint useful for comparing or hashing
+geometries.
+
+`bonds`, `angles`, and `dihedrals` take a geometry and an adjacency matrix
+and return sorted arrays of bonded pairs, triples, and quadruples, given by
+atomic numbers, with their distances or angles (in radians):
+
+```python
+amat = autogeom.adjacency_matrix(water)
+autogeom.bonds(water, amat)      # [[z1, z2, distance], ...]
+autogeom.angles(water, amat)     # [[z1, z2, z3, theta], ...]
+autogeom.dihedrals(water, amat)  # [[z1, z2, z3, z4, phi], ...]
+```
+
+To measure specific atoms by index, use `distance`, `angle`, and `dihedral`
+(in radians, or degrees with `degrees=True`):
+
+```python
+autogeom.distance(water, [0, 1])
+autogeom.angle(water, [1, 0, 2], degrees=True)       # vertex in the middle
+
+peroxide = autogeom.from_smiles("OO")  # O, O, H, H
+autogeom.dihedral(peroxide, [2, 0, 1, 3], degrees=True)  # H-O-O-H
+```
+
+## Transformations
+
+The rigid transformations return a new `Geometry`
+by default, or mutate in place with `in_place=True`:
+
+```python
+from scipy.spatial.transform import Rotation
+
+shifted = autogeom.translate(water, [1.0, 0.0, 0.0])
+rotated = autogeom.rotate(water, Rotation.from_euler("z", 90, degrees=True))
+mirrored = autogeom.reflect(water, normal=[0, 0, 1])
+```
+
+All three accept a `keys` argument to restrict the transformation to a
+subset of atoms by index, leaving the rest untouched:
+
+```python
+autogeom.translate(water, [1.0, 0.0, 0.0], keys=[0])  # move only atom 0
+```
+
+`rotate` and `reflect` also accept an `origin`: the point to rotate about, or a
+point on the reflection plane. For example, to rotate atom 2 about atom 0, or to
+move the center of mass to the origin:
+
+```python
+rot = Rotation.from_euler("z", 30, degrees=True)
+autogeom.rotate(water, rot, origin=water.coordinates[0], keys=[2])
+autogeom.center(water)
+```
+
+`alignment_rotation` finds the rotation that best maps one geometry onto
+another with the same atoms (by the Kabsch algorithm, about their centers of
+mass), and `inertial_frame_rotation` finds the rotation into the principal
+axis frame, with the principal axes from `principal_axes`:
+
+```python
+rot = autogeom.alignment_rotation(water, rotated)  # rotate(center(rotated), rot) ~ center(water)
+framed = autogeom.rotate(autogeom.center(water), autogeom.inertial_frame_rotation(water))
+moments, axes = autogeom.principal_axes(water)     # ascending; right-handed axes
+```
+
+## Selecting and joining atoms
+
+To take a geometry apart or put several together, use `select_atoms`,
+`remove_atoms`, and `join`:
+
+```python
+methane = autogeom.from_smiles("C")  # C, H, H, H, H
+methyl = autogeom.select_atoms(methane, [0, 1, 2, 3])  # keep these atoms, in this order
+methyl = autogeom.remove_atoms(methane, [4])           # same, by removing atom 4
+dimer = autogeom.join([methyl, methyl])                # concatenate atoms
+```
+
+Selections keep the charge, and keep the spin when it is still consistent with
+the electron count (otherwise they use the lowest consistent spin, so the
+methyl radical above has `spin=1`). Pass `charge` and `spin` to override.
+`join` sums the charges and spins.
+
+
+## Next steps
+
+- [Conversions](../user-guide/conversions.qmd): InChI, SMILES, formulas, and RDKit.
+- [Visualization](../user-guide/visualization.qmd): view or render a `Geometry`.

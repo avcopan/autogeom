@@ -1,0 +1,109 @@
+---
+title: "Conversions"
+guide-section: "User Guide"
+---
+
+# Conversions
+
+`Geometry` stays deliberately minimal (symbols, coordinates, charge, and spin),
+so conversions to and from other representations are functions rather than
+fields. They all go through [RDKit](https://www.rdkit.org/).
+
+## InChI and SMILES
+
+`inchi` and `smiles` generate a string from a geometry:
+
+```python
+import autogeom
+from autogeom import Geometry
+
+water = Geometry(
+    symbols=["O", "H", "H"],
+    coordinates=[[0.0, 0.0, 0.0], [0.0, 0.0, 0.96], [0.93, 0.0, -0.24]],
+    charge=0,
+    spin=0,
+)
+
+autogeom.inchi(water)   # "InChI=1S/H2O/h1H2"
+autogeom.smiles(water)  # "O"
+```
+
+Bonding is perceived from the coordinates, charge, and spin (see
+[RDKit molecules](#rdkit-molecules) below), and stereochemistry is assigned from
+the 3D structure. `smiles` returns RDKit's canonical SMILES with implicit
+hydrogens.
+
+In the other direction, `from_inchi` and `from_smiles` embed 3D coordinates:
+
+```python
+ethanol = autogeom.from_smiles("CCO")
+water_rt = autogeom.from_inchi("InChI=1S/H2O/h1H2")
+```
+
+Embedding uses a fixed random seed, so the same string always gives the same
+geometry. An invalid string raises a `ValueError`.
+
+## Molecular formula
+
+`formula` needs no bond perception, only the atomic symbols:
+
+```python
+autogeom.formula(ethanol)  # "C2H6O"
+```
+
+`formula` uses Hill order: with carbon present, C comes first, then H, then the
+remaining elements alphabetically; without carbon, all elements (including H)
+are alphabetical (e.g. `"ClH"` for HCl).
+
+## RDKit molecules
+
+`rdkit_mol` and `from_rdkit_mol` convert between a `Geometry` and an RDKit `Mol`:
+
+```python
+mol = autogeom.rdkit_mol(water)         # Geometry -> rdkit.Chem.Mol
+water_rt = autogeom.from_rdkit_mol(mol)  # rdkit.Chem.Mol -> Geometry
+```
+
+`rdkit_mol` takes the connectivity from `adjacency_matrix` (with valence caps)
+and then perceives bond orders, formal charges, and radical electrons that
+exactly match the geometry's charge and spin. It raises `NotImplementedError`
+for geometries with metals, and `autogeom.GeometryConversionError` if no Lewis
+structure is consistent with the connectivity, charge, and spin.
+
+`from_rdkit_mol` works whether or not the `Mol` already has 3D coordinates: if
+it doesn't, they are embedded first.
+
+### The `rd` module
+
+For RDKit work that doesn't go through `Geometry` at all, `autogeom.rd`
+operates directly on `rdkit.Chem.Mol` objects:
+
+```python
+from autogeom import rd
+
+water_mol = rd.from_smiles("O", with_coords=True)
+rd.smiles(water_mol)       # canonical, non-isomeric SMILES ("[H]O[H]")
+rd.inchi(water_mol)        # InChI
+rd.symbols(water_mol)      # ["O", "H", "H"]
+rd.max_bond_count("N")     # 4 (allowing formal charges of +/-1)
+rd.coordinates(water_mol)  # (N, 3) array; raises GeometryConversionError
+                           # if the Mol has no coordinates
+```
+
+The parsers (`from_smiles`, `from_inchi`, `from_xyz_block`) raise a `ValueError`
+for invalid input, and `add_coordinates` accepts a `seed` (`None` for a random
+one). The module also has `from_connectivity` (the bond perception behind
+`rdkit_mol`), `add_atom_numbers` (RDKit atom labels), `canonical_ranks`, and
+`assign_stereochemistry`/`chiral_centers`.
+
+## Adding a new conversion
+
+A bridge module such as `rd` knows only its external library and never imports
+`Geometry`. The `Geometry`-facing functions are built on top of it and exported
+from the package root. To support another library, follow the same split; see
+[Contributing](https://github.com/avcopan/autogeom/blob/main/CONTRIBUTING.md).
+
+## Next steps
+
+- [Geometries](../user-guide/geometry.qmd): measure and transform a `Geometry`.
+- [Visualization](../user-guide/visualization.qmd): view or render a `Geometry`.

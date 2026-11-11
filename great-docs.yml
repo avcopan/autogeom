@@ -360,6 +360,133 @@ authors:
 #       - helper_func
 #       - another_func
 
+reference:
+  - title: "Geometry"
+    desc: "The model at the center of the package, and selecting or combining its atoms"
+    contents:
+      - Geometry
+      - select_atoms
+      - remove_atoms
+      - join
+
+  - title: "XYZ files"
+    desc: "Reading and writing single- and multi-frame xyz"
+    contents:
+      - xyz_block
+      - from_xyz_block
+      - xyz_file
+      - from_xyz_file
+      - xyz_trajectory_block
+      - from_xyz_trajectory_block
+      - xyz_trajectory_file
+      - from_xyz_trajectory_file
+      - xyz_trajectory_comments
+
+  - title: "Properties and measurements"
+    desc: "Quantities computed from the coordinates"
+    contents:
+      - center_of_mass
+      - inertia_tensor
+      - principal_axes
+      - distance_matrix
+      - adjacency_matrix
+      - distance_keys
+      - distance
+      - angle
+      - dihedral
+      - bonds
+      - angles
+      - dihedrals
+
+  - title: "Transformations"
+    desc: "Moving atoms, and the rotations that align geometries"
+    contents:
+      - translate
+      - rotate
+      - reflect
+      - center
+      - twist
+      - twist_angle
+      - alignment_rotation
+      - axis_alignment_rotation
+      - inertial_frame_rotation
+
+  - title: "Conversions"
+    desc: "InChI, SMILES, formulas, and RDKit molecules"
+    contents:
+      - inchi
+      - from_inchi
+      - smiles
+      - from_smiles
+      - formula
+      - rdkit_mol
+      - from_rdkit_mol
+
+  - title: "Visualization"
+    desc: "Interactive views and rendered images"
+    contents:
+      - View
+      - view
+      - render_svg
+      - render_gif
+
+  - title: "Exceptions and units"
+    desc: "Errors raised by the package, and its unit registry"
+    contents:
+      - GeometryConversionError
+      - XYZFormatError
+      - ElementNotFoundError
+      - ureg
+
+  - title: "RDKit molecules"
+    desc: "`autogeom.rd`: functions on RDKit `Mol` objects, which never see a `Geometry`"
+    contents:
+      - rd.from_smiles
+      - rd.smiles
+      - rd.from_inchi
+      - rd.inchi
+      - rd.from_xyz_block
+      - rd.xyz_block
+      - rd.symbols
+      - rd.coordinates
+      - rd.charge
+      - rd.spin
+      - rd.has_coordinates
+      - rd.set_coordinates
+      - rd.add_coordinates
+      - rd.add_atom_numbers
+      - rd.canonical_ranks
+      - rd.assign_stereochemistry
+      - rd.chiral_centers
+      - rd.max_bond_count
+      - rd.from_connectivity
+      - rd.EMBED_SEED
+
+  - title: "Elements"
+    desc: "`autogeom.element`: periodic table data, looked up by atomic number or symbol"
+    contents:
+      - element.Element
+      - element.from_key
+      - element.number
+      - element.mass_number
+      - element.symbol
+      - element.mass
+      - element.covalent_radius
+      - element.group
+      - element.period
+      - element.electronegativity
+      - element.is_metal
+      - element.shell_capacity
+      - element.valence
+      - element.bonding_capacity
+
+  - title: "Types"
+    desc: "`autogeom.types`: array types and Pydantic fields"
+    contents:
+      - types.FloatArray
+      - types.FloatArrayField
+      - types.CoordinatesField
+
 # Inline Methods
 # --------------
 # Whether class methods get their own pages or stay inline.

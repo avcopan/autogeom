@@ -1,0 +1,43 @@
+---
+title: "Installation"
+guide-section: "Getting Started"
+---
+
+# Installation
+
+autogeom requires Python 3.13 or later.
+It is published as a conda package on [prefix.dev](https://prefix.dev/channels/avcopan/automech) and as a Python package on [PyPI](https://pypi.org/project/autogeom/).
+
+## With Pixi
+
+In a [Pixi](https://pixi.sh) workspace, add the `avcopan/automech` channel and then autogeom:
+
+```bash
+pixi workspace channel add https://repo.prefix.dev/avcopan/automech
+pixi add autogeom
+```
+
+RDKit (InChI/SMILES conversions and bond perception) and py3Dmol (interactive viewing) are installed with it.
+
+:::{.callout-note}
+xyzrender, which `render_svg` and `render_gif` use, is only on PyPI, so the conda package leaves it out.
+To render images, add it as a PyPI dependency:
+
+```bash
+pixi add --pypi xyzrender
+```
+
+Everything else works without it, and the render functions raise an `ImportError` explaining this if it is missing.
+:::
+
+## With pip or uv
+
+```bash
+pip install autogeom   # or: uv add autogeom
+```
+
+This installs xyzrender too.
+
+## For development
+
+See [Contributing](https://github.com/avcopan/autogeom/blob/main/CONTRIBUTING.md).
