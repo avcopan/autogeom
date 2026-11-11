@@ -1,8 +1,114 @@
-"""autogeom."""
+"""Molecular geometries: the `Geometry` model and the functions that operate on it."""
 
 __version__ = "0.0.0"
 
-from .layer1 import greet
-from .layer2 import greet_jim
+from . import element, rd, types
+from ._convert import (
+    formula,
+    from_inchi,
+    from_rdkit_mol,
+    from_smiles,
+    inchi,
+    rdkit_mol,
+    smiles,
+)
+from ._geometry import (
+    Geometry,
+    from_xyz_block,
+    from_xyz_file,
+    join,
+    remove_atoms,
+    select_atoms,
+    xyz_block,
+    xyz_file,
+)
+from ._measure import (
+    adjacency_matrix,
+    angle,
+    angles,
+    bonds,
+    center_of_mass,
+    dihedral,
+    dihedrals,
+    distance,
+    distance_keys,
+    distance_matrix,
+    inertia_tensor,
+    inertial_frame_rotation,
+    principal_axes,
+)
+from ._trajectory import (
+    from_xyz_trajectory_block,
+    from_xyz_trajectory_file,
+    xyz_trajectory_block,
+    xyz_trajectory_comments,
+    xyz_trajectory_file,
+)
+from ._transform import (
+    alignment_rotation,
+    axis_alignment_rotation,
+    center,
+    reflect,
+    rotate,
+    translate,
+    twist,
+    twist_angle,
+)
+from ._view import View, render_gif, render_svg, view
+from .exc import ElementNotFoundError, GeometryConversionError, XYZFormatError
+from .units import ureg
 
-__all__ = ["greet", "greet_jim"]
+__all__ = [
+    "ElementNotFoundError",
+    "Geometry",
+    "GeometryConversionError",
+    "View",
+    "XYZFormatError",
+    "adjacency_matrix",
+    "alignment_rotation",
+    "angle",
+    "angles",
+    "axis_alignment_rotation",
+    "bonds",
+    "center",
+    "center_of_mass",
+    "dihedral",
+    "dihedrals",
+    "distance",
+    "distance_keys",
+    "distance_matrix",
+    "element",
+    "formula",
+    "from_inchi",
+    "from_rdkit_mol",
+    "from_smiles",
+    "from_xyz_block",
+    "from_xyz_file",
+    "from_xyz_trajectory_block",
+    "from_xyz_trajectory_file",
+    "inchi",
+    "inertia_tensor",
+    "inertial_frame_rotation",
+    "join",
+    "principal_axes",
+    "rd",
+    "rdkit_mol",
+    "reflect",
+    "remove_atoms",
+    "render_gif",
+    "render_svg",
+    "rotate",
+    "select_atoms",
+    "smiles",
+    "translate",
+    "twist",
+    "twist_angle",
+    "types",
+    "ureg",
+    "view",
+    "xyz_block",
+    "xyz_file",
+    "xyz_trajectory_block",
+    "xyz_trajectory_comments",
+    "xyz_trajectory_file",
+]

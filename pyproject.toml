@@ -4,8 +4,20 @@ version = "0.0.0"
 readme = "README.md"  # the PyPI page
 license = "MIT"
 license-files = ["LICENSE"]
-authors = [{name = "Andreas V. Copan", email = "avcopan@uga.edu"}]
-dependencies = []
+authors = [
+    {name = "Andreas V. Copan", email = "avcopan@uga.edu"},
+    {name = "Troy N. Smith", email = "troy.smith@uga.edu"},
+]
+dependencies = [
+    "numpy>=2.2",
+    "pint>=0.24",
+    "py3dmol>=2.5",
+    "pydantic>=2.9",
+    "pyparsing>=3.3.2",
+    "rdkit>=2025.3.3",  # earlier releases fail to embed allenes (C=C=C)
+    "scipy>=1.15",
+    "xyzrender>=0.3.8",
+]
 requires-python = ">= 3.13"
 
 [project.urls]
@@ -54,8 +66,18 @@ root_package = "autogeom"
 name = "Module Layering"
 type = "layers"
 layers = [
-    "autogeom.layer2",
-    "autogeom.layer1",
+    "autogeom._view | autogeom._convert",
+    "autogeom._transform",
+    "autogeom._measure",
+    "autogeom._trajectory",
+    "autogeom._geometry",
+    "autogeom.rd",
+    "autogeom.element | autogeom.types | autogeom.units",
+    "autogeom.exc",
+]
+ignore_imports = [
+    # `Geometry._repr_html_` imports `view` lazily to render itself in Jupyter
+    "autogeom._geometry -> autogeom._view",
 ]
 
 # Pytest configurations

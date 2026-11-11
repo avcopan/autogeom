@@ -20,6 +20,12 @@ ignore-pypi-mapping = false
 
 [package.build.config.pypi-conda-map]
 # Add name mappings for packages not on conda-forge
+# xyzrender is only on PyPI, so leave it out of the conda package (geom imports it
+# lazily) and install it from PyPI in this workspace (see [pypi-dependencies])
+xyzrender = false
+
+[pypi-dependencies]
+xyzrender = ">=0.3.8"
 
 [package.host-dependencies]
 # Python and UV are automatically included
@@ -30,6 +36,8 @@ test = { features = ["test"], solve-group = "default"}
 dev = { features = ["dev", "test"], solve-group = "default"}
 # Test with the lowest versions allowed by the lower bounds on the dependencies
 test-lowest = { features = ["test", "lowest"] }
+# Regenerate the element data (outside the solve group, since mendeleev pins pint)
+data = { features = ["data"], no-default-feature = true }
 
 [feature.test.dependencies]
 pytest = ">=9.1.1"
@@ -52,11 +60,30 @@ typing-extensions = ">=4.12"
 # The oldest libstdcxx-ng packages ship a libstdc++.so.6 that shadows the newer one from
 # libstdcxx, so C++ packages fail with "GLIBCXX_3.4.31 not found"
 libstdcxx-ng = ">=13"
+# conda's py3dmol depends on an unbounded ipython, whose oldest versions pull in a
+# Jupyter stack too old for the ipykernel>=7.2 that xyzrender (PyPI) needs
+ipython = ">=9"
+# jupyter-core (via xyzrender's ipykernel) needs platformdirs>=2.5
+platformdirs = ">=2.5"
 
 # Only use PyPI wheels: unbounded transitive PyPI dependencies would otherwise resolve
 # to ancient source-only releases that fail to build
 [feature.lowest.pypi-options]
 no-build = true
+
+# Floors for unbounded transitive PyPI dependencies (of xyzrender) whose oldest wheels
+# don't work on Python 3.13; networkx follows SPEC 0
+[feature.lowest.pypi-options.dependency-overrides]
+networkx = ">=3.5"
+
+[feature.data.dependencies]
+python = "*"
+mendeleev = "*"
+sqlalchemy = "*"
+
+[feature.data.tasks]
+# Regenerate src/autogeom/elements-data.json
+elements-data = { cmd = "./scripts/elements-data.py", default-environment = "data" }
 
 [feature.dev.dependencies]
 # Dependency management
