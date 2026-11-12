@@ -1,6 +1,6 @@
 """Molecular geometries: the `Geometry` model and the functions that operate on it."""
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 from . import element, rd, types
 from ._convert import (

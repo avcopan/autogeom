@@ -9,7 +9,7 @@ autogeom = { path = "." }
 
 [package]
 name = "autogeom"
-version = "0.0.1"
+version = "0.0.2"
 
 [package.build]
 backend = { name = "pixi-build-python", version = "*" }

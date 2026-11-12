@@ -1,6 +1,6 @@
 [project]
 name = "autogeom"
-version = "0.0.1"
+version = "0.0.2"
 readme = "README.md"  # the PyPI page
 license = "MIT"
 license-files = ["LICENSE"]
