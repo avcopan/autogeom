@@ -72,11 +72,12 @@ def from_rdkit_mol(mol: Mol) -> Geometry:
     )
 
 
-def inchi(geo: Geometry) -> str:
+def inchi(geo: Geometry, *, stereo: bool = True) -> str:
     """Generate the standard InChI string of a geometry with RDKit.
 
     Args:
         geo: Geometry.
+        stereo: Whether to include the stereo layers.
 
     Returns:
         InChI string.
@@ -95,7 +96,7 @@ def inchi(geo: Geometry) -> str:
 
     %seealso from_inchi, smiles, formula
     """
-    return rd.inchi(rdkit_mol(geo))
+    return rd.inchi(rdkit_mol(geo), stereo=stereo)
 
 
 def from_inchi(inchi: str) -> Geometry:

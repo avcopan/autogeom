@@ -105,11 +105,12 @@ def from_inchi(inchi: str, *, with_coords: bool = False) -> Mol:
     return mol
 
 
-def inchi(mol: Mol) -> str:
+def inchi(mol: Mol, *, stereo: bool = True) -> str:
     """Write a standard InChI string.
 
     Args:
         mol: RDKit molecule.
+        stereo: Whether to include the stereo layers.
 
     Returns:
         InChI string.
@@ -117,7 +118,10 @@ def inchi(mol: Mol) -> str:
     Raises:
         ValueError: If InChI generation fails.
     """
-    ich = Chem.inchi.MolBlockToInchi(Chem.rdmolfiles.MolToMolBlock(mol))
+    options = "" if stereo else "-SNon"
+    ich = Chem.inchi.MolBlockToInchi(
+        Chem.rdmolfiles.MolToMolBlock(mol), options=options
+    )
     if not ich:
         msg = f"InChI generation failed for {Chem.MolToSmiles(mol)!r}."
         raise ValueError(msg)
