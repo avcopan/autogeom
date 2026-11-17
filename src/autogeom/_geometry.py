@@ -1,6 +1,7 @@
 """The `Geometry` model, single-frame xyz I/O, and atom selection."""
 
 from collections.abc import Collection, Sequence
+from enum import StrEnum
 from pathlib import Path
 from typing import Any, Self
 
@@ -15,10 +16,12 @@ from .types import CoordinatesField, FloatArray
 
 __all__ = [
     "Geometry",
+    "RotorKind",
     "from_xyz_block",
     "from_xyz_file",
     "join",
     "remove_atoms",
+    "rotor_kind",
     "select_atoms",
     "xyz_block",
     "xyz_file",
@@ -195,6 +198,19 @@ class Geometry(BaseModel):
                 "coordinates": self.coordinates[indices],
             },
         )
+
+
+class RotorKind(StrEnum):
+    """Rotor kind of a geometry: an atom, a linear molecule, or a nonlinear one."""
+
+    ATOM = "atom"
+    LINEAR = "linear"
+    NONLINEAR = "nonlinear"
+
+    @property
+    def rotation_count(self) -> int:
+        """Number of rotational degrees of freedom: 0, 2 or 3."""
+        return {RotorKind.ATOM: 0, RotorKind.LINEAR: 2, RotorKind.NONLINEAR: 3}[self]
 
 
 def _check_atom_count(symbols: Sequence[str], coordinates: np.ndarray) -> None:
@@ -438,3 +454,39 @@ def join(geos: Sequence[Geometry]) -> Geometry:
         charge=sum(geo.charge for geo in geos),
         spin=sum(geo.spin for geo in geos),
     )
+
+
+def rotor_kind(geo: Geometry, *, tol: float = 1e-3) -> RotorKind:
+    """Classify a geometry as an atom, a linear molecule, or a nonlinear one.
+
+    A geometry is linear when every atom lies within ``tol`` of the line that
+    best fits the coordinates, so that geometries linear to within optimization
+    noise count as linear.
+
+    Args:
+        geo: Geometry.
+        tol: Largest distance of an atom from the line, in Angstroms.
+
+    Returns:
+        The rotor kind.
+
+    Examples:
+        >>> import autogeom
+        >>> geo = autogeom.Geometry(
+        ...     symbols=["O", "C", "O"],
+        ...     coordinates=[[0, 0, -1.16], [0, 0, 0], [0, 0, 1.16]],
+        ...     charge=0,
+        ...     spin=0,
+        ... )
+        >>> autogeom.rotor_kind(geo)
+        <RotorKind.LINEAR: 'linear'>
+    """
+    if geo.atom_count <= 1:
+        return RotorKind.ATOM
+
+    r = geo.coordinates - geo.coordinates.mean(axis=0)
+    _, _, vt = np.linalg.svd(r)
+    resid = r - np.outer(r @ vt[0], vt[0])
+    if np.max(np.linalg.norm(resid, axis=1)) <= tol:
+        return RotorKind.LINEAR
+    return RotorKind.NONLINEAR

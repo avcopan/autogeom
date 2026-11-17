@@ -4,8 +4,9 @@
   "languages": {
     "Python": {
       "format_on_save": "on",
-      // Use ty instead of basedpyright for type checking and code navigation
-      "language_servers": ["ty", "ruff", "!basedpyright", "..."]
+      // Use only ty (types, navigation) and Ruff. No "...": it would re-enable basedpyright,
+      // pyrefly, pyright and pylsp, because this list replaces the default one
+      "language_servers": ["ty", "ruff"]
     }
   }
 }

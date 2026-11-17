@@ -1,0 +1,86 @@
+---
+title: "Vibrations"
+guide-section: "User Guide"
+---
+
+# Vibrations
+
+autogeom computes harmonic frequencies and normal modes from a Cartesian
+Hessian, with the translations and rotations projected out.
+
+## The input: `PESPoint`
+
+A `PESPoint` is the local quadratic model of the potential energy surface at a
+geometry: the `Geometry`, its Hessian, and optionally the gradient and energy.
+The units are atomic, apart from the coordinates:
+
+| field | shape | units |
+|---|---|---|
+| `geometry` | N atoms | Å |
+| `hessian` | `(3N, 3N)` | Hartree/Bohr² |
+| `gradient` (optional) | `(N, 3)` | Hartree/Bohr |
+| `energy` (optional) | | Hartree |
+| `rotor_kind` (optional) | | `RotorKind` |
+
+```python
+import numpy as np
+
+import autogeom
+
+geo = autogeom.from_xyz_file("ts.xyz", charge=0, spin=1)
+hess = np.loadtxt("ts_hessian.txt")  # e.g. from a quantum chemistry program
+point = autogeom.PESPoint(geometry=geo, hessian=hess)
+```
+
+`PESPoint` is frozen. On construction it converts the arrays to float64
+(float32 storage is fine), checks their shapes against the geometry, rejects
+NaN and inf, and symmetrizes the Hessian.
+
+## Atoms, linear and nonlinear molecules
+
+`autogeom.rotor_kind(geo)` returns a `RotorKind`: `ATOM`, `LINEAR` or
+`NONLINEAR`. A geometry is linear when every atom lies within `tol` (default
+1e-3 Å) of the best-fit line, so a molecule linear to within optimization noise
+(such as CO2 bent by 1e-4 Å) counts as linear. `PESPoint` fills in
+`rotor_kind` from its geometry, unless you pass it:
+
+```python
+point = autogeom.PESPoint(
+    geometry=geo, hessian=hess, rotor_kind=autogeom.RotorKind.NONLINEAR
+)
+```
+
+## Frequencies and modes
+
+```python
+vib = autogeom.vibrational_analysis(point)
+vib.frequencies  # cm⁻¹, ascending; imaginary frequencies are negative
+vib.modes        # (n_vib, N, 3) Cartesian displacements, each normalized
+```
+
+The rotor kind fixes the number of modes in advance: 3N − 6 for a nonlinear
+molecule, 3N − 5 for a linear one, and none for an atom
+(`3 * N - 3 - point.rotor_kind.rotation_count`).
+`vib.eigenvalues` and `vib.eigenvectors` hold the eigenvalues
+(Hartree/(Bohr² amu)) and orthonormal eigenvectors (one per row) of the
+projected, mass-weighted Hessian.
+
+The masses default to the most abundant isotopes (`geo.masses`), as Gaussian
+uses. Pass `masses=` (amu, one per atom) for isotopologues, or to match a
+program that uses standard atomic weights, such as ORCA:
+
+```python
+masses = [2.014 if s == "H" else m for s, m in zip(geo.symbols, geo.masses)]
+vib_d = autogeom.vibrational_analysis(point, masses=masses)
+```
+
+## Stationary-point order
+
+```python
+autogeom.stationary_point_order(vib)  # 0 for a minimum, 1 for a saddle point, ...
+```
+
+The order counts the negative eigenvalues, with no threshold: every sign
+counts, including a van der Waals saddle point's mode of 10–20i cm⁻¹. A wrong
+order means the structure isn't converged well enough. The one ambiguous case
+is a nearly free internal rotor, whose mode can lie within a few cm⁻¹ of zero.

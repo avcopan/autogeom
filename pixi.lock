@@ -215,7 +215,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/typing-inspection-0.4.5-pyh5ded981_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.16.0-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026e-h5d301ff_0.conda
-      - conda_source: autogeom[ad6998cb] @ .
+      - conda_source: autogeom[46f4f02d] @ .
       - pypi: https://files.pythonhosted.org/packages/07/6c/aa3f2f849e01cb6a001cd8554a88d4c77c5c1a31c95bdf1cf9301e6d9ef4/defusedxml-0.7.1-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/41/51/8041c2e70649e5b7f2a0aedbbbd0609ac099cfaa0cbde2014279c9c05756/cairosvg-2.9.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/44/0d/f494a2ec62ab56ffd44da4f236db374421fe0cd1e39d9ebc9785751eb432/periodictable-2.1.0-py3-none-any.whl
@@ -491,7 +491,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/uvicorn-0.54.0-pyh53cf698_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/uvicorn-standard-0.54.0-h6c8c7fd_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.2-pyh5ded981_0.conda
-      - conda_source: autogeom[ad6998cb] @ .
+      - conda_source: autogeom[46f4f02d] @ .
       - pypi: https://files.pythonhosted.org/packages/07/6c/aa3f2f849e01cb6a001cd8554a88d4c77c5c1a31c95bdf1cf9301e6d9ef4/defusedxml-0.7.1-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/15/d5/a8f9149b97cced9e1f4bff92ff0b6206120e2c853ae774d7020d6ecd8fa8/fqdn-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/1a/69/ee613f74085ca7103f79cd08d579c4f3177d1d26e5d3d9528d2d6536a707/nbformat-5.11.1-py3-none-any.whl
@@ -723,7 +723,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/typing-inspection-0.4.5-pyh5ded981_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.16.0-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026e-h5d301ff_0.conda
-      - conda_source: autogeom[ad6998cb] @ .
+      - conda_source: autogeom[46f4f02d] @ .
       - pypi: https://files.pythonhosted.org/packages/07/6c/aa3f2f849e01cb6a001cd8554a88d4c77c5c1a31c95bdf1cf9301e6d9ef4/defusedxml-0.7.1-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/41/51/8041c2e70649e5b7f2a0aedbbbd0609ac099cfaa0cbde2014279c9c05756/cairosvg-2.9.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/44/0d/f494a2ec62ab56ffd44da4f236db374421fe0cd1e39d9ebc9785751eb432/periodictable-2.1.0-py3-none-any.whl
@@ -811,7 +811,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/pixman-0.44.2-h29eaf8c_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/pthread-stubs-0.1-0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/pycairo-1.26.1-py313h112314f_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/linux-64/pydantic-core-2.23.3-py313h920b4c0_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/pydantic-core-2.27.0-py313h920b4c0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/python-3.13.0-h9ebbce0_101_cp313.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/qhull-2020.2-h434a139_5.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/rdkit-2025.03.3-py313hc8d2389_0.conda
@@ -865,7 +865,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/ptyprocess-0.6.0-py_1001.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/pure_eval-0.0.3-py_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/py3dmol-2.5.0-pyhd8ed1ab_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.9.1-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.10.0-pyh10f6f8f_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pygments-2.7.2-py_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/pyparsing-3.3.2-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pytest-9.1.1-pyhc364b38_2.conda
@@ -880,11 +880,11 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.0.6-py_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/tomli-1.0.0-pyhd8ed1ab_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/traitlets-5.13.0-pyhd8ed1ab_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.12.1-hd8ed1ab_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.12.1-pyha770c72_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.12.2-hd8ed1ab_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.12.2-pyha770c72_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/wcwidth-0.1.7-py_1.tar.bz2
-      - conda_source: autogeom[ad6998cb] @ .
+      - conda_source: autogeom[46f4f02d] @ .
       - pypi: https://files.pythonhosted.org/packages/12/ad/7ef8f538b0c7c451b7d6be818a7b4a6fc29aba8e69c22dd359ff921f382c/pyzmq-26.1.0-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/13/16/e290d903667c6283233b73be6b94be763058bfdcd66b6b9837f00813b268/tinycss2-0.6.0-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/22/d4/54f9d12668b58336bd30defe0307e6c61589a3e687b05c366f804b7faaf0/tornado-6.4.1-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
@@ -3379,13 +3379,13 @@ packages:
   run_exports: {}
   size: 120835
   timestamp: 1791296072365
-- conda: https://conda.anaconda.org/conda-forge/linux-64/pydantic-core-2.23.3-py313h920b4c0_0.conda
-  sha256: 3ca292bb14412cfeb30b926a0bca8340ef3da7cb6ed9c87227c664cd50cb9bdc
-  md5: 499c0dd7bb3d6e94523fcfb829b60be0
+- conda: https://conda.anaconda.org/conda-forge/linux-64/pydantic-core-2.27.0-py313h920b4c0_0.conda
+  sha256: 4c37e2e3ac00ef752cc4beb236a0e560f57d2abbfecd2db44434130d2e99d563
+  md5: e73221efc948ca33ac4f2ab0436353ad
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
-  - python >=3.13.0rc1,<3.14.0a0
+  - python >=3.13,<3.14.0a0
   - python_abi 3.13.* *_cp313
   - typing-extensions >=4.6.0,!=4.7.0
   constrains:
@@ -3395,8 +3395,8 @@ packages:
   purls:
   - pkg:pypi/pydantic-core?source=hash-mapping
   run_exports: {}
-  size: 1618598
-  timestamp: 1725735900263
+  size: 1633232
+  timestamp: 1732137368825
 - conda: https://conda.anaconda.org/conda-forge/linux-64/pydantic-core-2.50.4-py315h9eb62c9_0.conda
   sha256: d9963eb0a815920fe811e09d49cf1f8765fbcbbeebc7d89fdf7877713b893274
   md5: dbce0a0248659dac0d2ef9b8a43d1f15
@@ -3810,8 +3810,7 @@ packages:
   constrains:
   - __glibc >=2.17
   license: MIT
-  purls:
-  - pkg:pypi/ty?source=compressed-mapping
+  purls: []
   run_exports: {}
   size: 13607563
   timestamp: 1794264533849
@@ -5914,6 +5913,22 @@ packages:
   run_exports: {}
   size: 13737
   timestamp: 1769417304572
+- conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.10.0-pyh10f6f8f_0.conda
+  sha256: fbb18b5d24acad15c452d1d4467999d1a6cbc7b3a89771c0b2424031ddc303b4
+  md5: c8d0d99422d56d42185f43e1d4808cb5
+  depends:
+  - annotated-types >=0.6.0
+  - pydantic-core 2.27.0
+  - python >=3.9
+  - typing-extensions >=4.6.1
+  - typing_extensions >=4.12.2
+  license: MIT
+  license_family: MIT
+  purls:
+  - pkg:pypi/pydantic?source=hash-mapping
+  run_exports: {}
+  size: 315366
+  timestamp: 1732174789708
 - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.14.3-pyh5ded981_0.conda
   sha256: faafe38d963939f374556ca0aa0cba61654aaca8a0ee6892fa9661be466cb92b
   md5: 1c56381ccdf1762377714aba33912d53
@@ -5931,21 +5946,6 @@ packages:
   run_exports: {}
   size: 362816
   timestamp: 1793902780292
-- conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.9.1-pyhd8ed1ab_0.conda
-  sha256: 9064ec63d676d83452a6a07cb92d95ebfa02b5016841956ce55e324c45e012ee
-  md5: 5309e66d385d7367364e838764ad2ac4
-  depends:
-  - annotated-types >=0.6.0
-  - pydantic-core 2.23.3
-  - python >=3.7
-  - typing-extensions >=4.6.1
-  license: MIT
-  license_family: MIT
-  purls:
-  - pkg:pypi/pydantic?source=hash-mapping
-  run_exports: {}
-  size: 300605
-  timestamp: 1725908662611
 - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-extra-types-2.11.1-pyhcf101f3_0.conda
   sha256: 385a900cf5d1d39dafab6088537c58a32d572fd237d7c4598def92c4c1120cb8
   md5: 96513760035d70917819a2840155d23a
@@ -6604,22 +6604,22 @@ packages:
   - python
   license: MIT AND BSD-3-Clause
   purls:
-  - pkg:pypi/typer?source=compressed-mapping
+  - pkg:pypi/typer?source=hash-mapping
   run_exports: {}
   size: 188861
   timestamp: 1794265878787
-- conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.12.1-hd8ed1ab_0.conda
+- conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.12.2-hd8ed1ab_1.conda
   noarch: python
-  sha256: bbfed919c23f45e0937176260e6d3275bc46d7d41b7df8bbcf72f5b649b171e3
-  md5: 474ea8ffc0a68a93dd5fcb23f7e09e5d
+  sha256: c8e9c1c467b5f960b627d7adc1c65fece8e929a3de89967e91ef0f726422fd32
+  md5: b6a408c64b78ec7b779a3e5c7a902433
   depends:
-  - typing_extensions 4.12.1 pyha770c72_0
+  - typing_extensions 4.12.2 pyha770c72_1
   license: PSF-2.0
   license_family: PSF
   purls: []
   run_exports: {}
-  size: 10132
-  timestamp: 1717287867504
+  size: 10075
+  timestamp: 1733188758872
 - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.16.0-h69aa097_0.conda
   sha256: b141933ece3518f6d7b75dfb59451e2f26b405a44c18e2518a83e9a02e09315c
   md5: c680b5747e8c4c8f23dca0bb7042a8fc
@@ -6645,18 +6645,18 @@ packages:
   run_exports: {}
   size: 20983
   timestamp: 1793805183548
-- conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.12.1-pyha770c72_0.conda
-  sha256: c50d61fe29cd2752943358037ee1107a60b44b8d32c464d18308d668b6494573
-  md5: 26d7ee34132362115093717c706c384c
+- conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.12.2-pyha770c72_1.conda
+  sha256: 337be7af5af8b2817f115b3b68870208b30c31d3439bec07bfb2d8f4823e3568
+  md5: d17f13df8b65464ca316cbc000a3cb64
   depends:
-  - python >=3.8
+  - python >=3.9
   license: PSF-2.0
   license_family: PSF
   purls:
   - pkg:pypi/typing-extensions?source=hash-mapping
   run_exports: {}
-  size: 39706
-  timestamp: 1717287863652
+  size: 39637
+  timestamp: 1733188758212
 - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.16.0-pyhcf101f3_0.conda
   sha256: 2d888f90af0686044882c74193ec80a90ec1943145d94a7b1b048958acda1848
   md5: c70ad746c22219b9700931707482992c
@@ -6775,14 +6775,14 @@ packages:
   run_exports: {}
   size: 24791
   timestamp: 1792622774790
-- conda_source: autogeom[ad6998cb] @ .
+- conda_source: autogeom[46f4f02d] @ .
   variants:
     target_platform: noarch
   depends:
   - numpy >=2.2
   - pint >=0.24
   - py3dmol >=2.5
-  - pydantic >=2.9
+  - pydantic >=2.10
   - pyparsing >=3.3.2
   - python *
   - python >=3.13

@@ -16,6 +16,7 @@ The user guide is in `user_guide/`, and `.claude/skills/` and `.claude/rules/` c
 - Docstring examples run as doctests and start with `import autogeom`, so they read as user code.
 - `autogeom.rd` only handles RDKit `Mol` objects and never imports `Geometry`.
 - xyzrender is only on PyPI, so it is imported lazily and left out of the conda package (see `pixi.toml`).
+- Units: geometries are in Å, while Hessians and gradients are atomic (Hartree/Bohr², Hartree/Bohr).
 - autostorage's `GeometryRow` subclasses `Geometry`, so methods must keep working for subclasses (e.g. `relabel_atoms` uses `model_copy`).
 
 ## Style

@@ -12,7 +12,7 @@ dependencies = [
     "numpy>=2.2",
     "pint>=0.24",
     "py3dmol>=2.5",
-    "pydantic>=2.9",
+    "pydantic>=2.10",
     "pyparsing>=3.3.2",
     "rdkit>=2025.3.3",  # earlier releases fail to embed allenes (C=C=C)
     "scipy>=1.15",
@@ -68,7 +68,7 @@ type = "layers"
 layers = [
     "autogeom._view | autogeom._convert",
     "autogeom._transform",
-    "autogeom._measure",
+    "autogeom._measure | autogeom._vib",
     "autogeom._trajectory",
     "autogeom._geometry",
     "autogeom.rd",
