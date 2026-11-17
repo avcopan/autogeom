@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 ### Added
 - `RotorKind` and `rotor_kind`, which classify a geometry as an atom, a linear molecule, or a nonlinear one.
+- Vibrational analysis: `PESPoint`, `VibrationalAnalysis`, `vibrational_analysis`, and `stationary_point_order`.
 
 ## [0.0.2] - 2026-11-12
 ### Added

@@ -56,6 +56,12 @@ from ._transform import (
     twist,
     twist_angle,
 )
+from ._vib import (
+    PESPoint,
+    VibrationalAnalysis,
+    stationary_point_order,
+    vibrational_analysis,
+)
 from ._view import View, render_gif, render_svg, view
 from .exc import ElementNotFoundError, GeometryConversionError, XYZFormatError
 from .units import ureg
@@ -64,7 +70,9 @@ __all__ = [
     "ElementNotFoundError",
     "Geometry",
     "GeometryConversionError",
+    "PESPoint",
     "RotorKind",
+    "VibrationalAnalysis",
     "View",
     "XYZFormatError",
     "adjacency_matrix",
@@ -104,11 +112,13 @@ __all__ = [
     "rotor_kind",
     "select_atoms",
     "smiles",
+    "stationary_point_order",
     "translate",
     "twist",
     "twist_angle",
     "types",
     "ureg",
+    "vibrational_analysis",
     "view",
     "xyz_block",
     "xyz_file",

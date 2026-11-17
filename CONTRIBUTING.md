@@ -49,6 +49,7 @@ com = autogeom.center_of_mass(geo)
 ```
 
 - **Algorithms are functions**, not methods, and take the `Geometry` as their first argument.
+  Algorithms that need more than a geometry take a model containing one first, e.g. `vibrational_analysis(point: PESPoint)`.
   `Geometry` only has methods for what it needs to construct and display itself (xyz I/O, `relabel_atoms`).
 - **Variables** holding a `Geometry` are named `geo`.
 - **Add new functions to a private module** (`_measure.py`, `_transform.py`, …) and export them in `autogeom/__init__.py`.
