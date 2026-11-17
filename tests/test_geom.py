@@ -27,6 +27,23 @@ def test__masses_atomic_numbers_valences(water: Geometry) -> None:
     assert water.valences == [6, 1, 1]
 
 
+@pytest.mark.parametrize(
+    ("symbols", "coords", "kind"),
+    [
+        (["Ar"], [[1, 2, 3]], "atom"),
+        (["H", "H"], [[0, 0, 0], [1, 1, 1]], "linear"),
+        (["O", "C", "O"], [[0, 0, -1.16], [0, 0, 0], [0, 0, 1.16]], "linear"),
+        (["O", "C", "O"], [[0, 0, -1.16], [0, 1e-4, 0], [0, 0, 1.16]], "linear"),
+        (["O", "C", "O"], [[0, 0, -1.16], [0, 0.05, 0], [0, 0, 1.16]], "nonlinear"),
+    ],
+    ids=["atom", "diatomic", "co2", "co2-bent-1e-4", "co2-bent-0.05"],
+)
+def test__rotor_kind(symbols: list[str], coords: list, kind: str) -> None:
+    """Atoms, (nearly) linear and nonlinear geometries are told apart."""
+    geo = Geometry(symbols=symbols, coordinates=coords, charge=0, spin=0)
+    assert autogeom.rotor_kind(geo) == kind
+
+
 def test__coordinates_symbols_mismatch_raises() -> None:
     """Test that mismatched symbols/coordinates lengths are rejected."""
     with pytest.raises(ValueError, match="does not match"):

@@ -14,10 +14,12 @@ from ._convert import (
 )
 from ._geometry import (
     Geometry,
+    RotorKind,
     from_xyz_block,
     from_xyz_file,
     join,
     remove_atoms,
+    rotor_kind,
     select_atoms,
     xyz_block,
     xyz_file,
@@ -62,6 +64,7 @@ __all__ = [
     "ElementNotFoundError",
     "Geometry",
     "GeometryConversionError",
+    "RotorKind",
     "View",
     "XYZFormatError",
     "adjacency_matrix",
@@ -98,6 +101,7 @@ __all__ = [
     "render_gif",
     "render_svg",
     "rotate",
+    "rotor_kind",
     "select_atoms",
     "smiles",
     "translate",
