@@ -30,7 +30,7 @@ requires = ["uv_build"]
 
 # Ruff configurations
 [tool.ruff]
-extend-exclude = [".claude"]  # vendored agent skills
+extend-exclude = [".agents", ".claude"]  # vendored agent skills
 
 [tool.ruff.lint]
 select = ["ALL"]
