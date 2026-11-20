@@ -3,17 +3,20 @@
 from collections.abc import Collection, Sequence
 
 import numpy as np
+import pint
 from numpy.typing import ArrayLike
 from scipy.sparse.csgraph import connected_components
 from scipy.spatial.transform import Rotation
 
 from ._geometry import Geometry
 from ._measure import adjacency_matrix, center_of_mass
+from .types import FloatArray
 
 __all__ = [
     "alignment_rotation",
     "axis_alignment_rotation",
     "center",
+    "place",
     "reflect",
     "rotate",
     "translate",
@@ -310,3 +313,100 @@ def axis_alignment_rotation(
         raise ValueError(msg)
     # For a single pair of vectors, scipy returns the smallest rotation
     return Rotation.align_vectors([axis], [vec])[0]
+
+
+def place(
+    geo: Geometry,
+    ref: Geometry,
+    keys: Sequence[int],
+    distance: float | pint.Quantity,
+    *,
+    direction: ArrayLike | None = None,
+) -> Geometry:
+    """Move a geometry next to a reference geometry, e.g. to build a complex.
+
+    Atom `j` of `geo` is put `distance` from atom `i` of `ref` along `direction`,
+    and `geo` is turned rigidly so its other atoms point away from `ref`. Only
+    the distance to atom `i` is set, so other atoms of `ref` may clash with
+    `geo`.
+
+    Args:
+        geo: Geometry to move.
+        ref: Reference geometry, which stays fixed.
+        keys: The atoms ``(j, i)``: `j` of `geo` and `i` of `ref`.
+        distance: Distance between the atoms, in Angstroms or as a `pint`
+            quantity with length units.
+        direction: Direction from atom `i` to atom `j`. If `None`, the normal
+            to the best-fit plane of `ref`, on the side of atom `i`, or for a
+            linear `ref`, the direction from its centroid to atom `i`.
+
+    Returns:
+        The moved copy of `geo`; join it to `ref` with `join`.
+
+    Raises:
+        ValueError: If `direction` is zero, or is `None` and can't be chosen
+            (`ref` is an atom, or atom `i` is the center of a linear `ref`).
+
+    Example:
+        >>> import autogeom
+        >>> water = autogeom.Geometry(
+        ...     symbols=["O", "H", "H"],
+        ...     coordinates=[[0, 0, 0], [1, 0, 0], [0, 1, 0]],
+        ...     charge=0,
+        ...     spin=0,
+        ... )
+        >>> h2 = autogeom.Geometry(
+        ...     symbols=["H", "H"],
+        ...     coordinates=[[0, 0, 0], [0, 0.74, 0]],
+        ...     charge=0,
+        ...     spin=0,
+        ... )
+        >>> h2 = autogeom.place(h2, water, (0, 0), 2.5, direction=[0, 0, 1])
+        >>> h2.coordinates.round(6).tolist()
+        [[0.0, 0.0, 2.5], [0.0, 0.0, 3.24]]
+        >>> complex_ = autogeom.join([water, h2])
+        >>> round(autogeom.distance(complex_, (0, 3)), 6)
+        2.5
+    """
+    j, i = (int(k) for k in keys)
+    if isinstance(distance, pint.Quantity):
+        distance = distance.m_as("angstrom")
+    vec = _place_direction(ref, i) if direction is None else _unit(direction)
+
+    xyz = geo.coordinates
+    rest = np.delete(xyz, j, axis=0)
+    rest_vec = rest.mean(axis=0) - xyz[j] if len(rest) else np.zeros(3)
+    if not np.isclose(np.linalg.norm(rest_vec), 0.0):
+        # For a single pair of vectors, scipy returns the smallest rotation
+        rot = Rotation.align_vectors([vec], [rest_vec])[0]
+        geo = rotate(geo, rot, origin=xyz[j])
+    return translate(geo, ref.coordinates[i] + distance * vec - geo.coordinates[j])
+
+
+# Singular values below this (in Angstroms) count as zero when fitting a plane
+_PLANE_TOL = 1e-3
+
+
+def _place_direction(ref: Geometry, i: int) -> FloatArray:
+    """Choose the default direction for `place` from atom `i` of `ref`."""
+    xyz = ref.coordinates
+    centroid = xyz.mean(axis=0)
+    _, sing, vt = np.linalg.svd(xyz - centroid)
+    out = xyz[i] - centroid
+    if len(sing) > 1 and sing[1] > _PLANE_TOL:
+        normal = vt[-1]
+        return -normal if np.dot(out, normal) < 0 else normal
+    if np.isclose(np.linalg.norm(out), 0.0):
+        msg = f"Can't choose a direction from atom {i} of `ref`, so pass `direction`."
+        raise ValueError(msg)
+    return out / np.linalg.norm(out)
+
+
+def _unit(vec: ArrayLike) -> FloatArray:
+    """Normalize a vector, rejecting a zero vector."""
+    vec = np.asarray(vec, dtype=float)
+    norm = np.linalg.norm(vec)
+    if np.isclose(norm, 0.0):
+        msg = "Expected a non-zero `direction`."
+        raise ValueError(msg)
+    return vec / norm

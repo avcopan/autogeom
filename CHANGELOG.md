@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+### Added
+- `place(geo, ref, keys, distance, *, direction=None)`, which moves `geo` rigidly so that its atom `j` is `distance` (Å or a `pint` quantity) from atom `i` of `ref`, with the rest of `geo` turned away, e.g. to build a complex with `join([ref, place(...)])`. By default it approaches along the normal to `ref`'s best-fit plane, on atom `i`'s side, or along the axis of a linear `ref`; it raises a `ValueError` when no direction can be chosen.
 
 ## [0.0.3] - 2026-11-17
 ### Added
