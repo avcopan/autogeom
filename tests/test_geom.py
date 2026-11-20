@@ -635,6 +635,84 @@ def test__alignment_rotation_mismatch_raises(
         autogeom.alignment_rotation(water, peroxide)
 
 
+def _unit(vec: np.ndarray) -> np.ndarray:
+    """Normalize a vector."""
+    return vec / np.linalg.norm(vec)
+
+
+def test__place(water: Geometry, propyl_oxirane: Geometry) -> None:
+    """Test placing a geometry rigidly, on atom `i`'s side of a non-planar `ref`."""
+    ref, i = propyl_oxirane, 3
+    placed = autogeom.place(water, ref, (0, i), 2.5)
+    xyz, ref_xyz = placed.coordinates, ref.coordinates
+    vec = xyz[0] - ref_xyz[i]
+    assert np.isclose(np.linalg.norm(vec), 2.5)
+    assert np.dot(ref_xyz[i] - ref_xyz.mean(axis=0), vec) > 0
+    assert np.allclose(_unit(xyz[1:].mean(axis=0) - xyz[0]), _unit(vec))
+    assert np.allclose(
+        autogeom.distance_matrix(placed), autogeom.distance_matrix(water)
+    )
+
+
+@pytest.mark.parametrize("direction", [[0.0, 0.0, -2.0], [1.0, -1.0, 0.5]])
+def test__place_direction_and_units(water: Geometry, direction: list[float]) -> None:
+    """Test an explicit direction (including an antiparallel one) and a quantity."""
+    oh = Geometry(
+        symbols=["O", "H"], coordinates=[[0, 0, 0], [0, 0, 0.97]], charge=0, spin=1
+    )
+    placed = autogeom.place(oh, water, (0, 1), 3.0 * ureg.bohr, direction=direction)
+    xyz = placed.coordinates
+    expected = water.coordinates[1] + (3.0 * ureg.bohr).m_as("angstrom") * _unit(
+        np.array(direction)
+    )
+    assert np.allclose(xyz[0], expected)
+    assert np.allclose(_unit(xyz[1] - xyz[0]), _unit(np.array(direction)))
+
+
+def test__place_linear_ref() -> None:
+    """Test that a linear `ref` is approached end-on, beyond atom `i`."""
+    h2 = Geometry(
+        symbols=["H", "H"], coordinates=[[0, 0, 0], [0.74, 0, 0]], charge=0, spin=0
+    )
+    he = Geometry(symbols=["He"], coordinates=[[1, 1, 1]], charge=0, spin=0)
+    placed = autogeom.place(he, h2, (0, 1), 2.0)
+    assert np.allclose(placed.coordinates, [[2.74, 0, 0]])
+
+
+@pytest.mark.parametrize(
+    ("ref", "direction", "match"),
+    [
+        (
+            Geometry(symbols=["He"], coordinates=[[0, 0, 0]], charge=0, spin=0),
+            None,
+            "pass `direction`",
+        ),
+        (
+            Geometry(
+                symbols=["C", "O", "O"],
+                coordinates=[[0, 0, 0], [1.16, 0, 0], [-1.16, 0, 0]],
+                charge=0,
+                spin=0,
+            ),
+            None,
+            "pass `direction`",
+        ),
+        (
+            Geometry(symbols=["He"], coordinates=[[0, 0, 0]], charge=0, spin=0),
+            [0, 0, 0],
+            "non-zero",
+        ),
+    ],
+)
+def test__place_raises(
+    ref: Geometry, direction: list[float] | None, match: str
+) -> None:
+    """Test that an undefined or zero direction is rejected."""
+    he = Geometry(symbols=["He"], coordinates=[[0, 0, 0]], charge=0, spin=0)
+    with pytest.raises(ValueError, match=match):
+        autogeom.place(he, ref, (0, 0), 1.0, direction=direction)
+
+
 def test__inertial_frame_rotation(propyl_oxirane: Geometry) -> None:
     """Test that the inertial frame diagonalizes the inertia tensor."""
     geo = _rigid_motion(propyl_oxirane)

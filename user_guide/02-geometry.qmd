@@ -197,6 +197,21 @@ the electron count (otherwise they use the lowest consistent spin, so the
 methyl radical above has `spin=1`). Pass `charge` and `spin` to override.
 `join` sums the charges and spins.
 
+To build a complex, first move one geometry next to the other with `place`,
+which puts atom `j` of the moving geometry a distance (in Å, or a `pint`
+quantity) from atom `i` of the fixed one, and turns the rest of it away:
+
+```python
+water = autogeom.from_smiles("O")
+oh = autogeom.from_smiles("[OH]")
+oh = autogeom.place(oh, water, (0, 0), 2.5)  # atom 0 of OH, 2.5 Å from water's O
+complex_ = autogeom.join([water, oh])
+```
+
+By default it approaches along the normal to the fixed geometry's best-fit plane
+(or along the axis of a linear one); pass `direction` to choose. Only the one
+distance is set, so check the result for clashes with other atoms.
+
 
 ## Next steps
 
