@@ -109,6 +109,11 @@ keepachangelog = "*"
 # Documentation
 great-docs = ">=0.17.0"
 
+[feature.dev.activation.env]
+# Keep uv from syncing a .venv of its own (on `pixi run add`, for example): Pixi manages
+# the environments, and tools such as great-docs prefer a .venv when they find one
+UV_NO_SYNC = "1"
+
 [feature.dev.tasks]
 # Manage pyproject.toml with uv
 uv = "uv"
