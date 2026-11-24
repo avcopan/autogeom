@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+## [0.0.5] - 2026-11-24
 ### Fixed
 - `rd.from_connectivity` put a needed `+` on carbon as a sextet carbocation instead of on N or O as an onium with a full octet, e.g. the Criegee intermediate `CC=[O+][O-]` came out as `C[CH+]O[O-]`; atom states with an incomplete octet now cost extra.
 
