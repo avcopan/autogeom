@@ -4,6 +4,7 @@ import math
 
 import numpy as np
 import pytest
+from rdkit import Chem
 from rdkit.Chem import Mol
 
 from autogeom import GeometryConversionError, rd
@@ -127,3 +128,57 @@ def test__set_coordinates_wrong_shape_raises(water: Mol) -> None:
     """Test that coordinates of the wrong shape are rejected."""
     with pytest.raises(ValueError, match="shape"):
         rd.set_coordinates(water, np.zeros((2, 3)))
+
+
+@pytest.mark.parametrize(
+    "smiles",
+    [
+        # carbocation must not replace an onium
+        "CC=[O+][O-]",
+        "C=CC=[O+][O-]",
+        "CC=[N+]([O-])C",
+        "C=[N+]=[N-]",
+        "C#[N+][O-]",
+        "C=[O+][CH2-]",
+        # unchanged
+        "CC(=O)[O-]",
+        "C[N+](=O)[O-]",
+        "[O-][O+]=O",
+        "[N-]=[N+]=[N-]",
+        "N#[N+][O-]",
+        "[C-]#[O+]",
+        "O=S=O",
+        "CS(C)=O",
+        "O=S(=O)(O)O",
+        "[O-][N+](=O)[O-]",
+        "c1ccccc1",
+        "c1ccncc1",
+        "C[NH3+]",
+        "C=C[O-]",
+        "C=C[CH2+]",
+        "[CH3+]",
+        "B",
+        "FB(F)F",
+        "[CH3]",
+        "C=C[CH2]",
+        "[CH2]C=O",
+        "[N]=O",
+        "[O]N=O",
+        "O[O]",
+        "CO[O]",
+        "[O][O]",
+        "[CH2]",
+    ],
+)
+def test__from_connectivity_lewis(smiles: str) -> None:
+    """Test that the perceived Lewis structure matches the expected resonance form."""
+    expected = Chem.AddHs(Chem.MolFromSmiles(smiles))
+    symbols = [a.GetSymbol() for a in expected.GetAtoms()]
+    bonds = [(b.GetBeginAtomIdx(), b.GetEndAtomIdx()) for b in expected.GetBonds()]
+    charge = sum(a.GetFormalCharge() for a in expected.GetAtoms())
+    spin = sum(a.GetNumRadicalElectrons() for a in expected.GetAtoms())
+    rdm = rd.from_connectivity(symbols, bonds, charge=charge, spin=spin)
+
+    assert Chem.MolToSmiles(Chem.RemoveHs(rdm)) == Chem.MolToSmiles(
+        Chem.RemoveHs(expected)
+    )

@@ -154,6 +154,7 @@ IONS = [
     "C[C+](C)C",
     "C=[O+]C",
     "CC#[O+]",
+    "C=[OH+]",
     "c1cc[o+]cc1",
 ]
 
@@ -177,15 +178,6 @@ NATURAL_PRODUCTS_AND_DRUGS = [
     "CC1=C(C(C)(C)CCC1)/C=C/C(C)=C/C=C/C(C)=C/C=O",
 ]
 
-
-KNOWN_FAILURES = [
-    pytest.param(
-        "C=[OH+]",
-        marks=pytest.mark.xfail(
-            reason="perceived as the octet-deficient carbocation [CH2+]O", strict=True
-        ),
-    ),
-]
 
 ALL_SMILES = [
     *SMALL,
@@ -226,7 +218,7 @@ def _reference_geometry(smiles: str) -> tuple[Geometry, str]:
     return geo, rd.inchi(ref)
 
 
-@pytest.mark.parametrize("smiles", [*ALL_SMILES, *KNOWN_FAILURES])
+@pytest.mark.parametrize("smiles", ALL_SMILES)
 def test__rdkit_mol(smiles: str) -> None:
     """Test that the perceived Mol reproduces the reference InChI."""
     geo, inchi = _reference_geometry(smiles)

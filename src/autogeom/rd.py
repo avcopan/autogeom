@@ -362,10 +362,15 @@ def chiral_centers(mol: Mol) -> list[tuple[int, str]]:
 _CHARGE_COST = 10.0
 _EXPANDED_VALENCE_COST = 4.0
 _LONE_PAIR_COST = 25.0
+# Incomplete octet (group 13 effective element, e.g. a carbocation): above the
+# electronegativity tie-breaks, below a charge, so + goes on N/O onium atoms
+_INCOMPLETE_OCTET_COST = 5.0
 _MULTIRADICAL_ATOM_COST = 2.0
 # Electronegativity tie-breakers, too small to override the penalties above
 _CHARGE_EN_COST = 0.01
 _RADICAL_EN_COST = 0.001
+
+_GROUP_13_NUMBERS = frozenset({5, 13, 31, 49, 81, 113})
 
 _BOND_TYPES = {
     1: Chem.BondType.SINGLE,
@@ -427,7 +432,8 @@ def from_connectivity(
 
     The objective penalizes, from most to least severe: closed-shell lone pairs
     beyond the default valence (singlet carbenes), formal charges, valence
-    expansion, and multiple radical electrons on one atom. Ties put negative
+    expansion, incomplete octets (e.g. a carbocation, so that a needed + goes
+    on an onium N or O), and multiple radical electrons on one atom. Ties put negative
     charge on more electronegative atoms, and positive charge and radicals on
     less electronegative ones.
 
@@ -530,6 +536,8 @@ def _atom_states(
             continue
 
         cost = _CHARGE_COST * abs(chg) + _CHARGE_EN_COST * chg * en
+        if z_eff in _GROUP_13_NUMBERS:
+            cost += _INCOMPLETE_OCTET_COST
         states.extend(
             _AtomState(idx, chg, val, cost + _EXPANDED_VALENCE_COST * rank)
             for rank, val in enumerate(valences)
